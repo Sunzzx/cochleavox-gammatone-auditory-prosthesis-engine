@@ -98,9 +98,10 @@ class GammatoneFilterbank:
             a1 = -2.0 * r * np.cos(theta)
             a2 = r ** 2
             
-            # Normalization gain to make peak magnitude at fc close to unity
-            # At z = exp(1j*theta), |1 - p*z^-1| = 1 - r
-            gain_per_stage = 1.0 - r
+            # Exact gain per stage to normalize peak response at fc to unity
+            # D(e^(j*theta)) = 1 + a1*e^(-j*theta) + a2*e^(-2j*theta)
+            z_inv = np.exp(-1j * theta)
+            gain_per_stage = float(np.abs(1.0 + a1 * z_inv + a2 * (z_inv ** 2)))
             
             # 4 identical cascaded stages: SOS matrix has shape (4, 6)
             sos = np.zeros((4, 6), dtype=np.float64)
